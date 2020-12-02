@@ -6,6 +6,8 @@ import {
 } from './iterm2/index';
 import { ConfigurationTarget } from 'vscode';
 
+export const EXT_ID: string = "iterm2-theme-sync.parentProfile";
+
 async function createProfileWithVSCodeTheme(context: vscode.ExtensionContext, parentProfile: string) {
   try {
     const vscodeColorTheme = await getColorTheme(context);
@@ -42,7 +44,7 @@ async function checkFirstActivation(context: vscode.ExtensionContext) {
     };
     const parentProfile = (await vscode.window.showInputBox(options)) || '';
     const config = vscode.workspace.getConfiguration();
-    config.update("iterm2-theme-sync.parentProfile", parentProfile, ConfigurationTarget.Global);
+    config.update(EXT_ID.concat("parentProfile"), parentProfile, ConfigurationTarget.Global);
     const profile = await createProfileWithVSCodeTheme(context, parentProfile);
 
     if (!profile) {
@@ -63,7 +65,9 @@ export function activate(context: vscode.ExtensionContext) {
   vscode.window.onDidChangeActiveColorTheme(async (event) => {
     // START HERE: add configuration read iterm2-theme-sync.parentProfile = "default"
     // add also the config write in workspace in the check first activation
-    createProfileWithVSCodeTheme(context, "Default");
+    const config = vscode.workspace.getConfiguration(EXT_ID);
+    const parentProfile = config.get("parentProfile") as string;
+    createProfileWithVSCodeTheme(context, parentProfile);
   });
 }
 
