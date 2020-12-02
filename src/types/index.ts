@@ -98,7 +98,7 @@ export interface IItermProfile {
 
   "Use Italic Font" : boolean
   "Unlimited Scrollback" : boolean
-  
+
   "Window Type" : number
   "Blink Allowed" : boolean
   "Cursor Type" : number
@@ -114,14 +114,15 @@ export interface IItermProfile {
 
   "Name" : string,
   "Guid": string;
+  "Dynamic Profile Parent Name": string;
   "Shortcut" : string,
   "Transparency" : number,
 
   "Horizontal Spacing" : number
-  
+
 
   "Custom Directory" : string
   "Normal Font" : string
-  
+
   "Right Option Key Sends" : number
 }

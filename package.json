@@ -18,6 +18,18 @@
   "activationEvents": [
     "*"
   ],
+  "contributes": {
+    "configuration": {
+      "title": "Iterm2 Theme Sync",
+      "properties": {
+        "iterm2-theme-sync.parentProfile": {
+          "type": "string",
+          "default": "Default",
+          "description": "Set the parent profile to use in iTerm2 for the dynamic profile (see: https://iterm2.com/documentation-dynamic-profiles.html)"
+        }
+      }
+    }
+  },
   "main": "./dist/extension.js",
   "scripts": {
     "version": "update-changelog && git add CHANGELOG.md",

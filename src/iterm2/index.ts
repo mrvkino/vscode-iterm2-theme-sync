@@ -10,11 +10,13 @@ const DYNAMIC_PROFILE_GUID = '1bbe081f-c02f-497b-9ace-1f588dab1a7a'; // TODO: th
 const ITERM2_DYNAMIC_PROFILES_DIRECTORY_PATH = './Library/Application\ Support/iTerm2/DynamicProfiles/';
 
 export const vscodeColorThemeToItermProfile = (
-  theme: IColorTheme
+  theme: IColorTheme,
+  parentProfile: string
 ): Partial<IItermProfile> => {
   return {
     'Guid': DYNAMIC_PROFILE_GUID,
     'Name': `${theme.name} (synchronized with VSCode)`,
+    'Dynamic Profile Parent Name': `${parentProfile}`,
     'Ansi 0 Color': vscodeColorToItermColor(theme.ansi.normal.black),
     'Ansi 1 Color': vscodeColorToItermColor(theme.ansi.normal.red),
     'Ansi 2 Color': vscodeColorToItermColor(theme.ansi.normal.green),

@@ -4,11 +4,12 @@ import {
   vscodeColorThemeToItermProfile,
   updateDynamicProfile,
 } from './iterm2/index';
+import { ConfigurationTarget } from 'vscode';
 
-async function createProfileWithVSCodeTheme(context: vscode.ExtensionContext) {
+async function createProfileWithVSCodeTheme(context: vscode.ExtensionContext, parentProfile: string) {
   try {
     const vscodeColorTheme = await getColorTheme(context);
-    const itermProfile = vscodeColorThemeToItermProfile(vscodeColorTheme);
+    const itermProfile = vscodeColorThemeToItermProfile(vscodeColorTheme, parentProfile);
 
     await updateDynamicProfile(itermProfile);
 
@@ -21,7 +22,7 @@ async function createProfileWithVSCodeTheme(context: vscode.ExtensionContext) {
 function showFirstActivationNotification(profileName: string) {
   const text = [
     'The extension «iTerm2 Theme Sync» was successfully installed!',
-    `Now you can open iTerm2 preferences and make the profile called «${profileName}» default. 
+    `Now you can open iTerm2 preferences and make the profile called «${profileName}» default.
     After restart, iTerm will be synchronized with the selected VSCode theme.`,
   ];
 
@@ -29,10 +30,20 @@ function showFirstActivationNotification(profileName: string) {
 }
 
 async function checkFirstActivation(context: vscode.ExtensionContext) {
-  const wasActivated = context.globalState.get<boolean>('wasActivated');
+  const wasActivated = false;//context.globalState.get<boolean>('wasActivated');
 
   if (!wasActivated) {
-    const profile = await createProfileWithVSCodeTheme(context);
+    const options: vscode.InputBoxOptions = {
+      ignoreFocusOut: true,
+      placeHolder: "Default",
+      prompt:
+        'Enter the name of the profile to use as the parent profile.',
+      value: "Default",
+    };
+    const parentProfile = (await vscode.window.showInputBox(options)) || '';
+    const config = vscode.workspace.getConfiguration();
+    config.update("iterm2-theme-sync.parentProfile", parentProfile, ConfigurationTarget.Global);
+    const profile = await createProfileWithVSCodeTheme(context, parentProfile);
 
     if (!profile) {
       return;
@@ -50,7 +61,9 @@ export function activate(context: vscode.ExtensionContext) {
   checkFirstActivation(context);
 
   vscode.window.onDidChangeActiveColorTheme(async (event) => {
-    createProfileWithVSCodeTheme(context);
+    // START HERE: add configuration read iterm2-theme-sync.parentProfile = "default"
+    // add also the config write in workspace in the check first activation
+    createProfileWithVSCodeTheme(context, "Default");
   });
 }
 
